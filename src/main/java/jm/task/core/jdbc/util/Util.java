@@ -14,7 +14,7 @@ public class Util {
         try {
             Class.forName("org.postgresql.Driver");
             con = DriverManager.getConnection(URL, USER, PASSWORD);
-//            System.out.printf("Соединение с БД установилено");
+            System.out.printf("Соединение с БД установилено");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             System.out.println("Ошибка подключения к БД");

@@ -20,6 +20,7 @@ public class UserDaoJDBCImpl implements UserDao {
     public UserDaoJDBCImpl() {
     }
 
+    @Override
     public void createUsersTable() {
         String sql = "CREATE TABLE IF NOT EXISTS users (" +
                 "id SERIAL PRIMARY KEY, " +
@@ -27,13 +28,15 @@ public class UserDaoJDBCImpl implements UserDao {
                 "lastNAme VARCHAR(50), " +
                 "age SMALLINT)";
         try {
-            statement.execute(sql);
+            statement.executeUpdate(sql);
+            System.out.println("Таблица создана");
         } catch (SQLException e) {
             System.out.println("Ошибка создания таблицы: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    @Override
     public void dropUsersTable() {
         String sql = "DROP TABLE IF EXISTS users";
         try {
@@ -44,6 +47,7 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
+    @Override
     public void saveUser(String name, String lastName, byte age) {
         String sql = "INSERT INTO users (name, lastName, age) VALUES (?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -59,6 +63,7 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
+    @Override
     public void removeUserById(long id) {
         String sql = "DELETE FROM users WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -75,16 +80,20 @@ public class UserDaoJDBCImpl implements UserDao {
         }
     }
 
+    @Override
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<User>();
-        String sql = "SELECT name, lastName, age FROM users";
+        String sql = "SELECT * FROM users";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
+                long id = rs.getLong("id");
                 String name = rs.getString("name");
                 String lastName = rs.getString("lastName");
                 byte age = rs.getByte("age");
-                users.add(new User(name, lastName, age));
+                User user = new User(name, lastName, age);
+                user.setId(id);
+                users.add(user);
             }
         } catch (SQLException e) {
             System.out.println("Ошибка при получении всех User`ов: " + e.getMessage());
@@ -93,6 +102,7 @@ public class UserDaoJDBCImpl implements UserDao {
         return users;
     }
 
+    @Override
     public void cleanUsersTable() {
         String sql = "DELETE FROM users";
         try {
