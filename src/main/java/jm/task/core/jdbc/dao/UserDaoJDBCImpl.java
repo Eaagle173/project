@@ -10,6 +10,7 @@ import java.util.List;
 public class UserDaoJDBCImpl implements UserDao {
     private final Connection connection = Util.getConnection();
     private final Statement statement;
+
     {
         try {
             statement = connection.createStatement();
